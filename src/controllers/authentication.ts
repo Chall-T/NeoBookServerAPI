@@ -58,9 +58,6 @@ export const register =async (req: express.Request, res: express.Response) =>{
                 salt,
                 password: authentication(salt, password),
             },
-            verified: false,
-            role_id: 10,
-            user_created: Date.now()
         });
         return res.status(200).json(user).end();
     }catch (error){

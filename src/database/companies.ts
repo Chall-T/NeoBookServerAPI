@@ -7,9 +7,8 @@ const CompanySchema = new mongoose.Schema({
         ref: "User",
         require: true
     },
-    verified: {type: Boolean},
-    role_id: {type: Number},
-    created: {type: Date}
+    verified: {type: Boolean, default: false},
+    created: {type: Date, default: Date.now()}
 });
 export const CompanyModel = mongoose.model('Company', CompanySchema);
 
@@ -20,4 +19,6 @@ export const getCompanyById = (id: string) => CompanyModel.findById(id);
 export const companyCreate = (data: Record<string, any>) => new CompanyModel(data).save().then((company) => company.toObject());
 export const deleteCompanyById = (id: string) => CompanyModel.findOneAndDelete({ _id: id});
 export const updateCompanyById = (id: string, data: Record<string, any>) => CompanyModel.findByIdAndUpdate(id, data);
-export const getCompaniesByUserId = (id: string) => CompanyModel.findById(id).populate('owner');
+
+export const getCompaniesByUserId = (id: string) => CompanyModel.find({owner: id});
+export const getCompanyByIdWithUser = (id: string) => CompanyModel.findById({id}).populate('owner');

@@ -8,9 +8,9 @@ const UserSchema = new mongoose.Schema({
         salt: {type: String, select: false},
         sessionToken: {type: String, select: false},
     },
-    verified: {type: Boolean},
-    role_id: {type: Number},
-    created: {type: Date}
+    verified: {type: Boolean, default: false},
+    role_id: {type: Number, default: 10},
+    created: {type: Date, default: Date.now()}
 });
 export const UserModel = mongoose.model('User', UserSchema);
 
@@ -24,4 +24,4 @@ export const createUser = (data: Record<string, any>) => new UserModel(data).sav
 export const deleteUserById = (id: string) => UserModel.findOneAndDelete({ _id: id});
 export const updateUserById = (id: string, data: Record<string, any>) => UserModel.findByIdAndUpdate(id, data);
 
-export const getCompaniesByUserId = (id: string) => UserModel.findById(id).populate('owner');
+// export const getCompaniesByUserId = (id: string) => UserModel.findById(id).populate('owner');
