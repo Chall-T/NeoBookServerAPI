@@ -1,7 +1,9 @@
 import express from "express";
 import { createUser, getUserByEmail } from "../database/users";
+import {getCompaniesByUserId} from "../database/companies"
 import { random, authentication } from "../helpers";
 import * as dotenv from 'dotenv';
+import {get, merge} from 'lodash';
 dotenv.config({ path: __dirname+'/../.env' });
 
 export const login = async(req: express.Request, res: express.Response) =>{
@@ -26,7 +28,9 @@ export const login = async(req: express.Request, res: express.Response) =>{
         
         const domain = process.env.DOMAIN || 'localhost';
         res.cookie('NEO-AUTH', user.authentication.sessionToken, { domain: domain, path: '/'})
-
+        
+        const companies = await getCompaniesByUserId(user.id)
+        merge(req, {companies: companies})
         return res.status(200).json(user).end();
     }catch (error){
         console.log(error);
@@ -54,6 +58,9 @@ export const register =async (req: express.Request, res: express.Response) =>{
                 salt,
                 password: authentication(salt, password),
             },
+            verified: false,
+            role_id: 10,
+            user_created: Date.now()
         });
         return res.status(200).json(user).end();
     }catch (error){

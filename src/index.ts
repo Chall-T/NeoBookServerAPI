@@ -32,5 +32,4 @@ mongoose.Promise = Promise;
 mongoose.connect(MONGO_URL);
 mongoose.connection.on('error', (error: Error) => console.log(error));
 
-console.log('a')
 app.use('/', router());

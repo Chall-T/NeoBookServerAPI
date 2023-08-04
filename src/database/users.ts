@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const UserSchema = new mongoose.Schema({
     username: {type: String, required: true},
@@ -8,6 +8,9 @@ const UserSchema = new mongoose.Schema({
         salt: {type: String, select: false},
         sessionToken: {type: String, select: false},
     },
+    verified: {type: Boolean},
+    role_id: {type: Number},
+    created: {type: Date}
 });
 export const UserModel = mongoose.model('User', UserSchema);
 
@@ -20,3 +23,5 @@ export const getUserById = (id: string) => UserModel.findById(id);
 export const createUser = (data: Record<string, any>) => new UserModel(data).save().then((user) => user.toObject());
 export const deleteUserById = (id: string) => UserModel.findOneAndDelete({ _id: id});
 export const updateUserById = (id: string, data: Record<string, any>) => UserModel.findByIdAndUpdate(id, data);
+
+export const getCompaniesByUserId = (id: string) => UserModel.findById(id).populate('owner');
