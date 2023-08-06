@@ -24,12 +24,10 @@ export const isOwner = async(req: express.Request, res: express.Response, next: 
 
 export const isAuthenticated = async(req: express.Request, res: express.Response, next: express.NextFunction) =>{
     try{
-        const sessionToken = req.cookies['NEO-AUTH']
-
+        let sessionToken = req.cookies['NEO-AUTH'] || req.headers.authorization.split(" ")[1];
         if (!sessionToken){
             return res.sendStatus(403);
         }
-
         const existingUser = await getUserBySessionToken(sessionToken);
 
         if (!existingUser){
