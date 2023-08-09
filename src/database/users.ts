@@ -1,10 +1,10 @@
 import mongoose, { Schema } from "mongoose";
 
 const UserSchema = new mongoose.Schema({
-    username: {type: String, required: true},
-    email: {type: String, required: true},
+    username: {type: String, required: [true, 'Please enter your username']},
+    email: {type: String, required: [true, 'Please enter a valid email']},
     authentication: {
-        password: {type: String, required: true, select: false},
+        password: {type: String, required: [true, "Please enter an password"], select: false, minlength: [8, "Minimum password lenght is 8 characters"]},
         salt: {type: String, select: false},
         sessionToken: {type: String, select: false},
     },
@@ -12,6 +12,7 @@ const UserSchema = new mongoose.Schema({
     role_id: {type: Number, default: 10},
     created: {type: Date, default: Date.now()}
 });
+
 export const UserModel = mongoose.model('User', UserSchema);
 
 export const getUsers = () => UserModel.find();

@@ -1,7 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
 const CompanyUsersSchema = new mongoose.Schema({
-    name: {type: String, require: true},
     user_id: {
         type: Schema.Types.ObjectId,
         ref: "User",
@@ -12,7 +11,26 @@ const CompanyUsersSchema = new mongoose.Schema({
         ref: "Company",
         require: true
     },
-    verified: {type: Boolean, default: false},
+    roles: [{
+        Role:{
+            type: Schema.Types.ObjectId,
+            ref: "Role",
+            require: false
+        },
+        updated:{
+            type: Date, default: Date.now()
+        },
+        updated_by:{
+            type: Schema.Types.ObjectId,
+            ref: "User",
+            require: true
+        }
+    }],
+    added_by: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        require: true
+    },
     added: {type: Date, default: Date.now()}
 });
 export const CompanyUsersModel = mongoose.model('CompanyUsers', CompanyUsersSchema);

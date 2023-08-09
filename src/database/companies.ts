@@ -12,7 +12,7 @@ const CompanySchema = new mongoose.Schema({
 });
 export const CompanyModel = mongoose.model('Company', CompanySchema);
 
-export const getCompanies = () => CompanyModel.find();
+export const getCompanies = () => CompanyModel.find().populate('owner');
 // export const getCompaniesByOwner = (owner: any) => CompanyModel.findOne({owner});
 
 export const getCompanyById = (id: string) => CompanyModel.findById(id);
