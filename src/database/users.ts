@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import companies from "router/companies";
 
 const UserSchema = new mongoose.Schema({
     username: {type: String, required: [true, 'Please enter your username']},
@@ -8,6 +9,12 @@ const UserSchema = new mongoose.Schema({
         salt: {type: String, select: false},
         sessionToken: {type: String, select: false},
     },
+    companies: [{
+        type: String
+    }],
+    companies_invites: [{
+        type: String
+    }],
     verified: {type: Boolean, default: false},
     role_id: {type: Number, default: 10},
     created: {type: Date, default: Date.now()}
@@ -25,4 +32,7 @@ export const createUser = (data: Record<string, any>) => new UserModel(data).sav
 export const deleteUserById = (id: string) => UserModel.findOneAndDelete({ _id: id});
 export const updateUserById = (id: string, data: Record<string, any>) => UserModel.findByIdAndUpdate(id, data);
 
+export const addUserToCompany = (id: string) => getUserById(id).then(
+
+)
 // export const getCompaniesByUserId = (id: string) => UserModel.findById(id).populate('owner');

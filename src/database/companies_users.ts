@@ -35,13 +35,13 @@ const CompanyUsersSchema = new mongoose.Schema({
 });
 export const CompanyUsersModel = mongoose.model('CompanyUsers', CompanyUsersSchema);
 
-export const getCompanies = () => CompanyUsersModel.find();
-// export const getCompaniesByOwner = (owner: any) => CompanyUsersModel.findOne({owner});
+export const getCompaniesUser = () => CompanyUsersModel.find();
+// export const getCompaniesUserByOwner = (owner: any) => CompanyUsersModel.findOne({owner});
 
-export const getCompanyById = (id: string) => CompanyUsersModel.findById(id);
-export const companyCreate = (data: Record<string, any>) => new CompanyUsersModel(data).save().then((company) => company.toObject());
-export const deleteCompanyById = (id: string) => CompanyUsersModel.findOneAndDelete({ _id: id});
-export const updateCompanyById = (id: string, data: Record<string, any>) => CompanyUsersModel.findByIdAndUpdate(id, data);
+export const getCompanyUserById = (id: string) => CompanyUsersModel.findById(id);
+export const companyUserCreate = (data: Record<string, any>) => new CompanyUsersModel(data).save().then((companyUser) => companyUser.toObject());
+export const deleteCompanyUserById = (id: string) => CompanyUsersModel.findOneAndDelete({ _id: id});
+export const updateCompanyUserById = (id: string, data: Record<string, any>) => CompanyUsersModel.findByIdAndUpdate(id, data);
 
-export const getCompaniesByUserId = (id: string) => CompanyUsersModel.find({owner: id});
-export const getCompanyByIdWithUser = (id: string) => CompanyUsersModel.findById({id}).populate('owner');
+export const getCompaniesUserByUserId = (id: string) => CompanyUsersModel.find({owner: id});
+export const getCompanyUserByIdWithUser = (id: string) => CompanyUsersModel.findById({id}).populate('owner');
