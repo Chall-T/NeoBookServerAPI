@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
-import companies from "router/companies";
+import {getCompanyById} from "../database/companies";
+
 
 const UserSchema = new mongoose.Schema({
     username: {type: String, required: [true, 'Please enter your username']},
@@ -32,7 +33,36 @@ export const createUser = (data: Record<string, any>) => new UserModel(data).sav
 export const deleteUserById = (id: string) => UserModel.findOneAndDelete({ _id: id});
 export const updateUserById = (id: string, data: Record<string, any>) => UserModel.findByIdAndUpdate(id, data);
 
-export const addUserToCompany = (id: string) => getUserById(id).then(
+export const userAcceptCompanyInvite = (invitedUser: any, company: any) => {
+    if (!company){
+        return [404, "Company not found"]
+    }
+    if (invitedUser.companies.includes(company)){
+        return [400, "User already in company"]
+    }
+    if (invitedUser.companies_invites.includes(company)) {
 
-)
+        return [200, "Success"]
+    } else {
+        return [400, "User not invited to the company"]
+    }
+
+}
+
+export const userSendCompanyInvite = (invitedUser: any, company: any) => {
+    if (!company){
+        return [404, "Company not found"]
+    }
+    if (invitedUser.companies_invites.includes(company)){
+        return [400, "User already invited"]
+    }
+    if (!invitedUser.companies.includes(company)) {
+        
+        return [200, "Success"]
+    } else {
+        return [400, "User already in company"]
+    }
+    return [400, "Unknown error"]
+
+}
 // export const getCompaniesByUserId = (id: string) => UserModel.findById(id).populate('owner');

@@ -1,7 +1,7 @@
 import express from 'express';
 import {get, merge} from 'lodash';
 import { deleteCompanyById, getCompanyById, getCompanies, companyCreate } from '../database/companies';
-import { UserModel, getUserById } from 'database/users';
+import { CustomerModel, getCustomerById } from 'database/customers';
 
 export const getAllCompanies = async(req: express.Request, res: express.Response) =>{
     try{
@@ -46,6 +46,30 @@ export const updateCompany = async(req: express.Request, res: express.Response) 
 }
 
 export const createCompany =async (req: express.Request, res: express.Response) =>{
+    try{
+        const {name} = req.body;
+        const currentUser = get(req, 'identity') as string;
+        if (!name){
+            return res.sendStatus(400);
+        }
+        // const existingCompany = await getCompanyByName(name);
+        // if (existingCompany){
+        //     return res.sendStatus(400);
+        // }
+        //const user = await getUserById(currentUserId)
+        //console.log(user);
+        const company = await companyCreate({
+            name,
+            owner: currentUser
+        });
+        return res.status(200).json(company).end();
+    }catch (error){
+        console.log(error);
+        return res.sendStatus(400);
+    }
+}
+
+export const createCustomer = async (req: express.Request, res: express.Response) =>{
     try{
         const {name} = req.body;
         const currentUser = get(req, 'identity') as string;
