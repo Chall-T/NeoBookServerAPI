@@ -62,20 +62,20 @@ export const updateUser = async(req: express.Request, res: express.Response) =>{
 
 export const CompanyAcceptInvite = async(req: express.Request, res: express.Response) =>{
     try{
-        const { company } = req.body;
+        const { id } = req.params;
         const currentUserId = get(req, 'identity._id') as string;
 
-        if (!company) {
+        if (!id) {
             return res.sendStatus(400);
         }
         const user = await getUserById(currentUserId);
-        if (user.companies.includes(company)){
+        if (user.companies.includes(id)){
             return res.sendStatus(400);
         }
         for (var i = 0; i <= user.companies_invites.length; i++){
-            if (user.companies_invites[i] == company ){
-                user.companies.push(company);
-                const company_invite_index = user.companies_invites.indexOf(company);
+            if (user.companies_invites[i] == id ){
+                user.companies.push(id);
+                const company_invite_index = user.companies_invites.indexOf(id);
                 user.companies_invites.splice(company_invite_index, 1);
                 var user_updated = true;
                 break;
@@ -96,13 +96,13 @@ export const CompanyAcceptInvite = async(req: express.Request, res: express.Resp
 
 export const CompanyCreateInvite = async(req: express.Request, res: express.Response) =>{
     try{
-        const { IviteUserid } = req.params;
+        const { id } = req.params;
         const { company_id } = req.body;
         const currentUserId = get(req, 'identity._id') as string;
         if (!company_id) {
             return res.sendStatus(400);
         }
-        const invitedUser = await getUserById(IviteUserid);
+        const invitedUser = await getUserById(id);
         const user = await getUserById(currentUserId);
         const company = await getCompanyById(company_id);
         for (var i=0; i <= user.companies.length; i++){
@@ -110,47 +110,35 @@ export const CompanyCreateInvite = async(req: express.Request, res: express.Resp
                 // check roles
             }
         }
-
         if (invitedUser.companies.includes(company_id)){
             return res.sendStatus(400);
         }
         if (invitedUser.companies_invites.includes(company_id)){
-            return res.sendStatus(400);
+            return res.sendStatus(200);
         }
-        invitedUser.companies.push(company_id)
+        invitedUser.companies_invites.push(company_id)
 
-        await user.save()
-        return res.status(200).json(user).end();
+        await invitedUser.save()
+        return res.status(200).json(invitedUser).end();
     }catch (error){
         console.log(error);
-        return res.sendStatus(400)
+        return res.sendStatus(400);
     }
 }
 
 export const LeaveCompany = async(req: express.Request, res: express.Response) =>{
     try{
-        const { company_id } = req.body;
+        const { id } = req.params;
         const currentUserId = get(req, 'identity._id') as string;
-        if (!company_id) {
+        if (!id) {
             return res.sendStatus(400);
         }
         const user = await getUserById(currentUserId);
-        if (user.companies.includes(company_id)){
+        if (!user.companies.includes(id)){
             return res.sendStatus(400);
         }
-        for (var i = 0; i <= user.companies.length; i++){
-            if (user.companies[i] == company_id ){
-                const company_index = user.companies.indexOf(company_id);
-                user.companies_invites.splice(company_index, 1);
-                var user_updated = true;
-                break;
-            }
-        }
-
-        if (!user_updated) {
-            return res.sendStatus(404);
-        }
-
+        const company_index = user.companies.indexOf(id);
+        user.companies.splice(company_index, 1);
         await user.save()
         return res.status(200).json(user).end();
     }catch (error){
@@ -160,6 +148,7 @@ export const LeaveCompany = async(req: express.Request, res: express.Response) =
 }
 function remove_invites_from_user(user:any, company_id:string){
     if (user.companies_invites.includes(company_id)){
+        console.log('a')
         const company_index = user.companies_invites.indexOf(company_id);
         user.companies_invites.splice(company_index, 1);
         remove_invites_from_user(user, company_id)
@@ -169,14 +158,14 @@ function remove_invites_from_user(user:any, company_id:string){
 }
 export const RejectCompanyInvite = async(req: express.Request, res: express.Response) =>{
     try{
-        const { company_id } = req.body;
+        const { id } = req.params;
         const currentUserId = get(req, 'identity._id') as string;
-        if (!company_id) {
+        if (!id) {
             return res.sendStatus(400);
         }
         const user = await getUserById(currentUserId);
-        if (user.companies_invites.includes(company_id)){
-            remove_invites_from_user(user, company_id)
+        if (user.companies_invites.includes(id)){
+            remove_invites_from_user(user, id)
         }else{}
         
         await user.save()
